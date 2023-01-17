@@ -195,8 +195,6 @@ void FirstJuceProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
 
     leftChain.process(leftContext);
     rightChain.process(rightContext);
-
-
 }
 
 //==============================================================================
