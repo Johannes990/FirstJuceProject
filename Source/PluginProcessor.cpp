@@ -233,29 +233,20 @@ Coefficients makePeakFilter(const ChainSettings& chainSettings, double sampleRat
 
 void FirstJuceProjectAudioProcessor::updatePeakFilter(const ChainSettings& chainSettings)
 {
-   /* auto peakCoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(
-        getSampleRate(),
-        chainSettings.peakFreq,
-        chainSettings.peakQuality,
-        juce::Decibels::decibelsToGain(chainSettings.peakGainInDecibels));*/
-
     auto peakCoefficients = makePeakFilter(chainSettings, getSampleRate()); 
 
     updateCoefficients(leftChain.get<ChainPositions::Peak>().coefficients, peakCoefficients);
     updateCoefficients(rightChain.get<ChainPositions::Peak>().coefficients, peakCoefficients);
 }
 
-void /*FirstJuceProjectAudioProcessor::*/updateCoefficients(Coefficients & old, const Coefficients & replacements)
+void updateCoefficients(Coefficients & old, const Coefficients & replacements)
 {
     *old = *replacements;
 }
 
 void FirstJuceProjectAudioProcessor::updateLowCutFilters(const ChainSettings &chainSettings)
 {
-    auto lowCutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(
-        chainSettings.lowCutFreq,
-        getSampleRate(),
-        (chainSettings.lowCutSlope + 1) * 2);
+    auto lowCutCoefficients = makeLowCutFilter(chainSettings, getSampleRate());
 
     auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
     auto& rightLowCut = rightChain.get<ChainPositions::LowCut>();
@@ -266,10 +257,7 @@ void FirstJuceProjectAudioProcessor::updateLowCutFilters(const ChainSettings &ch
 
 void FirstJuceProjectAudioProcessor::updateHighCutFilters(const ChainSettings& chainSettings)
 {
-    auto highCutCoefficients = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(
-        chainSettings.highCutFreq,
-        getSampleRate(),
-        (chainSettings.highCutSlope + 1) * 2);
+    auto highCutCoefficients = makeHighCutFilter(chainSettings, getSampleRate());
 
     auto& leftHighCut = leftChain.get<ChainPositions::HighCut>();
     auto& rightHighCut = rightChain.get<ChainPositions::HighCut>();

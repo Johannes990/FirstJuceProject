@@ -29,11 +29,24 @@ FirstJuceProjectAudioProcessorEditor::FirstJuceProjectAudioProcessorEditor (Firs
         addAndMakeVisible(comp);
     }
 
+    const auto& params = audioProcessor.getParameters();
+    for (auto param : params)
+    {
+        param->addListener(this);
+    }
+
+    startTimerHz(60);
+
     setSize (600, 400);
 }
 
 FirstJuceProjectAudioProcessorEditor::~FirstJuceProjectAudioProcessorEditor()
 {
+    const auto& params = audioProcessor.getParameters();
+    for (auto param : params)
+    {
+        param->removeListener(this);
+    }
 }
 
 //==============================================================================
@@ -96,7 +109,7 @@ void FirstJuceProjectAudioProcessorEditor::paint (juce::Graphics& g)
     const double outputMax = responseArea.getY();
     auto map = [outputMin, outputMax](double input)
     {
-        return juce::jmap(input, -25.0, 25.0, outputMin, outputMax);
+        return juce::jmap(input, -26.0, 26.0, outputMin, outputMax);
     };
 
     responseCurve.startNewSubPath(responseArea.getX(), map(magnitudes.front()));
@@ -143,8 +156,14 @@ void FirstJuceProjectAudioProcessorEditor::timerCallback()
 {
     if (parametersChanged.compareAndSetBool(false, true))
     {
+        DBG("params changed");
         // update the monochain
+        auto chainSettings = getChainSettings(audioProcessor.apvts);
+        auto peakCoefficients = makePeakFilter(chainSettings, audioProcessor.getSampleRate());
+        updateCoefficients(monoChain.get<ChainPositions::Peak>().coefficients, peakCoefficients);
+
         // signal a repaint
+        repaint();
     }
 }
 
