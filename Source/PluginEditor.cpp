@@ -23,9 +23,9 @@ void LookAndFeel::drawRotarySlider(
     using namespace juce;
 
     auto bounds = Rectangle<float>(x, y, width, height);
-    g.setColour(Colour(3, 62, 30));
+    g.setColour(Colours::yellow);
     g.fillEllipse(bounds);      // circle fill
-    g.setColour(Colour(150, 150, 75));
+    g.setColour(Colours::black);
     g.drawEllipse(bounds, 1.f);     // circle edge
 
     auto center = bounds.getCentre();
@@ -60,6 +60,11 @@ void RotarySliderWithLabels::paint(juce::Graphics& g)
     auto range = getRange();
     auto sliderBounds = getSliderBounds();
 
+    g.setColour(Colours::red);
+    g.drawRect(getLocalBounds());
+    g.setColour(Colours::greenyellow);
+    g.drawRect(sliderBounds);
+
     getLookAndFeel().drawRotarySlider(
         g,
         sliderBounds.getX(),
@@ -76,7 +81,18 @@ void RotarySliderWithLabels::paint(juce::Graphics& g)
 
 juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const
 {
-    return getLocalBounds();
+    auto bounds =  getLocalBounds();
+
+    auto size = juce::jmin(bounds.getWidth(), bounds.getHeight());
+
+    size -= getTextHeight() * 2;
+
+    juce::Rectangle<int> r;
+    r.setSize(size, size);
+    r.setCentre(bounds.getCentreX(), 0);
+    r.setY(2);
+
+    return r;
 }
 
 //=============================================================================
