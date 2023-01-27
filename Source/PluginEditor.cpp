@@ -346,7 +346,7 @@ void ResponseCurveComponent::resized()
     for (auto gl : gain_lines)
     {
         auto normalized_y = jmap(gl, -24.f, 24.f, float(bottom), float(top));
-        g.setColour(gl == 0.f ? Colour(200, 54, 99) : Colours::darkgrey);
+        g.setColour(gl == 0.f ? Colour(8, 252, 126) : Colours::darkgrey);
         g.drawHorizontalLine(normalized_y, left, right);
     }
 
@@ -379,6 +379,27 @@ void ResponseCurveComponent::resized()
         r.setCentre(x, 0);
         r.setY(1);
 
+        g.drawFittedText(str, r, juce::Justification::centred, 1);
+    }
+
+    for (auto gl : gain_lines)
+    {
+        auto normalized_y = jmap(gl, -24.f, 24.f, float(bottom), float(top));
+
+        String str;
+        if (gl > 0)
+            str << '+';
+
+        str << gl;
+
+        auto textWidth = g.getCurrentFont().getStringWidth(str);
+
+        Rectangle<int> r;
+        r.setSize(textWidth, fontHeight);
+        r.setX(getWidth() - textWidth);
+        r.setCentre(r.getCentreX(), normalized_y);
+
+        g.setColour(gl == 0.f ? Colour(8, 252, 126) : Colours::lightgrey);
         g.drawFittedText(str, r, juce::Justification::centred, 1);
     }
 
