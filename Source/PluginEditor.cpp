@@ -310,10 +310,10 @@ void ResponseCurveComponent::resized()
 
     Array<float> frequencies
     {
-        20, 40, 60, 80, 100,
-        200, 400, 600, 800, 1000,
-        2000, 4000, 6000, 8000, 10000,
-        15000, 20000
+        20, 33, 63, 100,
+        200, 330, 630, 1000,
+        2000, 3300, 6300, 10000,
+        20000
     };
 
     Array<float> gain_lines
@@ -348,6 +348,38 @@ void ResponseCurveComponent::resized()
         auto normalized_y = jmap(gl, -24.f, 24.f, float(bottom), float(top));
         g.setColour(gl == 0.f ? Colour(200, 54, 99) : Colours::darkgrey);
         g.drawHorizontalLine(normalized_y, left, right);
+    }
+
+    g.setColour(Colours::lightgrey);
+    const int fontHeight = 10;
+    g.setFont(fontHeight);
+
+    for (int i = 0; i < frequencies.size(); ++i)
+    {
+        auto f = frequencies[i];
+        auto x = xs[i];
+
+        bool addK = false;
+        String str;
+        if (f > 999.f)
+        {
+            addK = true;
+            f /= 1000.f;
+        }
+
+        str << f;
+
+        if (addK)
+            str << 'k';
+        str << "Hz";
+
+        auto textWidth = g.getCurrentFont().getStringWidth(str);
+        Rectangle<int> r;
+        r.setSize(textWidth, fontHeight);
+        r.setCentre(x, 0);
+        r.setY(1);
+
+        g.drawFittedText(str, r, juce::Justification::centred, 1);
     }
 
     //g.drawRect(getAnalysisArea());
