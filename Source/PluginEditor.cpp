@@ -75,11 +75,6 @@ void RotarySliderWithLabels::paint(juce::Graphics& g)
     auto range = getRange();
     auto sliderBounds = getSliderBounds();
 
-    //g.setColour(Colours::red);
-    //g.drawRect(getLocalBounds());
-    //g.setColour(Colours::greenyellow);
-    //g.drawRect(sliderBounds);
-
     getLookAndFeel().drawRotarySlider(
         g,
         sliderBounds.getX(),
@@ -215,7 +210,6 @@ void ResponseCurveComponent::updateChain()
     auto peakCoefficients = makePeakFilter(chainSettings, audioProcessor.getSampleRate());
     updateCoefficients(monoChain.get<ChainPositions::Peak>().coefficients, peakCoefficients);
 
-
     auto lowCutCoefficients = makeLowCutFilter(chainSettings, audioProcessor.getSampleRate());
     auto highCutCoefficients = makeHighCutFilter(chainSettings, audioProcessor.getSampleRate());
 
@@ -282,6 +276,7 @@ void ResponseCurveComponent::paint(juce::Graphics& g)
     // set responseCurve draw area boundaries
     const double outputMin = responseArea.getBottom();
     const double outputMax = responseArea.getY();
+
     auto map = [outputMin, outputMax](double input)
     {
         return juce::jmap(input, -26.0, 26.0, outputMin, outputMax);
@@ -295,7 +290,6 @@ void ResponseCurveComponent::paint(juce::Graphics& g)
 
     g.setColour(juce::Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);   // draw response area
-
     g.strokePath(responseCurve, juce::PathStrokeType(2.f));     // draw response curve
 }
 
@@ -378,7 +372,6 @@ void ResponseCurveComponent::resized()
         r.setSize(textWidth, fontHeight);
         r.setCentre(x, 0);
         r.setY(1);
-
         g.drawFittedText(str, r, juce::Justification::centred, 1);
     }
 
@@ -386,7 +379,9 @@ void ResponseCurveComponent::resized()
     {
         auto normalized_y = jmap(gl, -24.f, 24.f, float(bottom), float(top));
 
+        // draw gain for EQ
         String str;
+
         if (gl > 0)
             str << '+';
 
@@ -398,12 +393,19 @@ void ResponseCurveComponent::resized()
         r.setSize(textWidth, fontHeight);
         r.setX(getWidth() - textWidth);
         r.setCentre(r.getCentreX(), normalized_y);
-
         g.setColour(gl == 0.f ? Colour(8, 252, 126) : Colours::lightgrey);
         g.drawFittedText(str, r, juce::Justification::centred, 1);
-    }
 
-    //g.drawRect(getAnalysisArea());
+        // draw gain for analyzer
+        str.clear();
+        str << (gl - 24.f);
+        
+        r.setX(1);
+        textWidth = g.getCurrentFont().getStringWidth(str);
+        r.setSize(textWidth, fontHeight);
+        g.setColour(Colours::lightgrey);
+        g.drawFittedText(str, r, juce::Justification::centred, 1);
+    }
 }
 
 //==============================================================================
