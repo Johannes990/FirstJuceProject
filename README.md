@@ -13,6 +13,11 @@ To run:
 * Open the build folder and locate Projucer. I'm using Visualstudio 2022, so for me: Builds/VisualStudio2022/x64/Debug/App/Projucer.exe
 * Set up your global paths in Projucer in File -> Global Paths. However by default these should already be set up to your users folder.
 * Select File -> New Project -> Plug-In -> Basic
-* Name it whatever you like
-* select Create Project... and save it to a location of your choosing
-* 
+* Name it FirstJuceProject
+* Select Create Project... and save it to a location of your choosing
+* Copy files PluginEditor.h, PluginEditor.cpp, PluginProcessor.h and PluginProcessor.cpp to Source folder in your new project
+* Open the jucer file in your project folder -> select Modules on the left pane -> click on the plus icon at the bottom -> Add a module -> Global JUCE modules path -> juce_dsp
+* Click on Save and Open in IDE
+* Run build on either Standalone or VST
+
+:)
